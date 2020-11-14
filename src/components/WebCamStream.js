@@ -20,6 +20,7 @@ class WebCamStream extends Component {
 
     this.innerWidth = 800
     this.innerHeight = 600
+    this.state = { isVideoLoading: false, marginLeft: 0, marginTop: 0 }
   }
 
   setControls (controls) {
@@ -35,7 +36,7 @@ class WebCamStream extends Component {
     controls.enableDamping = true
     controls.dampingFactor = 0.05
     controls.autoRotate = true
-    controls.autoRotateSpeed = 1
+    controls.autoRotateSpeed = 20
   }
 
   setRenderer (renderer) {
@@ -62,7 +63,7 @@ class WebCamStream extends Component {
     loader.load('http://localhost:3000/OdysseyMomentum/Cryptomice-EonAR/magic_red/scene.gltf', function (data) {
       self.magicRedScene = data.scene
       self.magicRedScene.position.set(0, -10, -0.75)
-      self.showRed()
+      // self.showRed()
     })
   }
 
@@ -100,14 +101,40 @@ class WebCamStream extends Component {
     this.loadGLTF()
   }
 
-  showRed () {
-    this.scene.remove(this.magicGreenScene)
-    this.scene.add(this.magicRedScene)
+  showRedMarker () {
+    if (!this.isVisibleRed) {
+      this.scene.remove(this.magicGreenScene)
+      this.scene.add(this.magicRedScene)
+      this.isVisibleRed = true
+      this.isVisibleGreen = false
+    }
   }
 
-  showGreen () {
-    this.scene.remove(this.magicRedScene)
-    this.scene.add(this.magicGreenScene)
+  showGreenMarker () {
+	  if (!this.isVisibleGreen) {
+      this.scene.remove(this.magicRedScene)
+      this.scene.add(this.magicGreenScene)
+      this.isVisibleGreen = true
+      this.isVisibleRed = false
+    }
+  }
+
+  hideMarkers () {
+    if (this.isVisibleGreen) {
+      this.isVisibleGreen = false
+      this.scene.remove(this.magicGreenScene)
+    }
+    if (this.magicRedScene) {
+      this.magicRedScene = false
+      this.scene.remove(this.magicRedScene)
+    }
+  }
+
+  move (x, y, lenght) {
+    const xpos = x - this.innerWidth / 2 + lenght / 2
+    const ypos = y - this.innerHeight / 2 + lenght / 2
+    this.setState({ isVideoLoading: false, marginLeft: xpos, marginTop: ypos })
+ 	// $('#sceneElement').css( 'margin-left', xpos).css( 'margin-top', ypos)
   }
 
   componentDidMount () {
@@ -136,12 +163,13 @@ class WebCamStream extends Component {
 
   tick () {
     const video = this.videoTag.current
+    const self = this
 
     const checkVideoState = setInterval(() => {
       if (video.readyState === video.HAVE_ENOUGH_DATA) {
         clearInterval(checkVideoState)
 
-        this.setState({ isVideoLoading: false })
+        this.setState({ isVideoLoading: false, marginLeft: this.state.marginLeft, marginTop: this.state.marginTop })
 
         const canvasElement = this.canvas.current
         const canvas = canvasElement.getContext('2d')
@@ -151,56 +179,42 @@ class WebCamStream extends Component {
         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
 
-        /* if (code) {
-          this.drawLine(
-            code.location.topLeftCorner,
-            code.location.topRightCorner,
-            '#FF3B58'
-          )
-          this.drawLine(
-            code.location.topRightCorner,
-            code.location.bottomRightCorner,
-            '#FF3B58'
-          )
-          this.drawLine(
-            code.location.bottomRightCorner,
-            code.location.bottomLeftCorner,
-            '#FF3B58'
-          )
-          this.drawLine(
-            code.location.bottomLeftCorner,
-            code.location.topLeftCorner,
-            '#FF3B58'
-          )
-        } */
-        fetch('http://ec2-18-202-26-252.eu-west-1.compute.amazonaws.com:5005/model/test4/predict?data=1,0,1,0.2,0')
-          .then(res => res.json())
-          .then(
-            (result) => {
-              console.log(result)
-              this.setState({
-                isLoaded: true,
-                items: result.items
-              })
-            },
-            // Note: it's important to handle errors here
-            // instead of a catch() block so that we don't swallow
-            // exceptions from actual bugs in components.
-            (error) => {
-              console.log(error)
-              this.setState({
-                isLoaded: true,
-                error
-              })
-            }
-          )
+        if (code) {
+          var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
+          var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
+          var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
+		  self.move(xcenter, ycenter, lenght)
+
+          if (!self.networkLoading) {
+            self.networkLoading = true
+            fetch('http://ec2-18-202-26-252.eu-west-1.compute.amazonaws.com:5005/model/test4/predict?data=1,0,1,0.2,0')
+				  .then(res => res.json())
+				  .then(
+                (result) => {
+					  console.log(result)
+					  const risk = parseFloat(result['results'][0])
+					  if (risk) { self.showRedMarker() } else { self.showGreenMarker() }
+					  setTimeout(function () { self.networkLoading = false }, 5000)
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+					  console.log(error)
+					  self.networkLoading = false
+                }
+				  )
+          }
+        } else if (!self.networkLoading) {
+          self.hideMarkers()
+        }
         requestAnimationFrame(this.tick)
       }
     }, 10)
   }
 
   render () {
-    const { isVideoLoading } = this.state
+    const { isVideoLoading, marginTop, marginLeft } = this.state
 
     return (
       <div style={{ width: '800px', height: '600px' }}>
@@ -215,7 +229,7 @@ class WebCamStream extends Component {
         {!isVideoLoading && <canvas ref={this.canvas} />}
 
         <div
-          style={{ width: '800px', height: '600px', position: 'fixed', top: '50px' }}
+          style={{ width: '800px', height: '600px', position: 'fixed', top: '0px', marginTop: marginTop, marginLeft: marginLeft }}
           ref={mount => { this.mount = mount }} />
 
         {isVideoLoading && <p>Please wait while we load the video stream.</p>}
