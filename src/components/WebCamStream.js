@@ -172,7 +172,7 @@ class WebCamStream extends Component {
         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
 	
-        if (code ) {
+        if (code && code.data.startWith("http") ) {
           var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
           var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
           var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
