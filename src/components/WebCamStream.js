@@ -125,14 +125,14 @@ class WebCamStream extends Component {
       this.scene.remove(this.magicGreenScene)
     }
     if (this.magicRedScene) {
-      this.magicRedScene = false
+      this.isVisibleRed = false
       this.scene.remove(this.magicRedScene)
     }
   }
 
   move (x, y, lenght) {
-    const xpos = x - this.innerWidth / 2 + lenght / 2
-    const ypos = y - this.innerHeight / 2 + lenght / 2
+    const xpos = x - this.innerWidth / 2 + lenght/2
+    const ypos = y - this.innerHeight / 2 + lenght/2
     this.setState({ isVideoLoading: false, marginLeft: xpos, marginTop: ypos })
  	// $('#sceneElement').css( 'margin-left', xpos).css( 'margin-top', ypos)
   }
@@ -178,13 +178,14 @@ class WebCamStream extends Component {
         canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height)
         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
-
-        if (code) {
+	
+        if (code && code.data.startsWith("gs")) {
           var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
           var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
           var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
 		  self.move(xcenter, ycenter, lenght)
 
+		  self.scanned = code
           if (!self.networkLoading) {
             self.networkLoading = true
             fetch('http://ec2-18-202-26-252.eu-west-1.compute.amazonaws.com:5005/model/test4/predict?data=1,0,1,0.2,0')
@@ -202,22 +203,36 @@ class WebCamStream extends Component {
                 (error) => {
 					  console.log(error)
 					  self.networkLoading = false
+					  self.scanned = ""
                 }
 				  )
           }
         } else if (!self.networkLoading) {
           self.hideMarkers()
+		  self.scanned = ""
         }
         requestAnimationFrame(this.tick)
       }
     }, 10)
   }
+  
 
   render () {
     const { isVideoLoading, marginTop, marginLeft } = this.state
-
+	const self = this
+	
+	function handleClick(e) {
+		e.preventDefault();
+		console.log('The link was clicked.');
+		if (self.scanned !== "") {
+			alert(self.scanned)
+		}
+	  }
+	  
     return (
-      <div style={{ width: '800px', height: '600px' }}>
+	<div>
+	    <h2>Scan Qr code</h2>
+      <div style={{ width: '800px', height: '550px' }} onClick={handleClick}>
         <video
           ref={this.videoTag}
           width='800'
@@ -234,6 +249,7 @@ class WebCamStream extends Component {
 
         {isVideoLoading && <p>Please wait while we load the video stream.</p>}
       </div>
+	  </div>
     )
   }
 }
