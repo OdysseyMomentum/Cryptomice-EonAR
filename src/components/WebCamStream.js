@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link, Redirect } from "react-router-dom";
 import jsQR from 'jsqr'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -150,25 +151,17 @@ class WebCamStream extends Component {
       })
   }
 
-  drawLine (begin, end, color) {
-    const canvasElement = this.canvas.current
-    const canvas = canvasElement.getContext('2d')
-    canvas.beginPath()
-    canvas.moveTo(begin.x, begin.y)
-    canvas.lineTo(end.x, end.y)
-    canvas.lineWidth = 4
-    canvas.strokeStyle = color
-    canvas.stroke()
-  }
-
   tick () {
     const video = this.videoTag.current
     const self = this
 
     const checkVideoState = setInterval(() => {
+		if (!video)
+			return
       if (video.readyState === video.HAVE_ENOUGH_DATA) {
         clearInterval(checkVideoState)
-
+		if (!this.canvas.current)
+			return
         this.setState({ isVideoLoading: false, marginLeft: this.state.marginLeft, marginTop: this.state.marginTop })
 
         const canvasElement = this.canvas.current
@@ -179,15 +172,15 @@ class WebCamStream extends Component {
         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
 	
-        if (code && code.data.startsWith("gs")) {
+        if (code ) {
           var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
           var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
           var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
 		  self.move(xcenter, ycenter, lenght)
 
 		  self.scanned = code
-          if (!self.networkLoading) {
-            self.networkLoading = true
+          if (!self.state.isNetworkLoading) {
+            self.state.isNetworkLoading = true
             fetch('http://ec2-18-202-26-252.eu-west-1.compute.amazonaws.com:5005/model/test4/predict?data=1,0,1,0.2,0')
 				  .then(res => res.json())
 				  .then(
@@ -195,19 +188,23 @@ class WebCamStream extends Component {
 					  console.log(result)
 					  const risk = parseFloat(result['results'][0])
 					  if (risk) { self.showRedMarker() } else { self.showGreenMarker() }
-					  setTimeout(function () { self.networkLoading = false }, 5000)
+					  setTimeout(function () { 
+						  self.state.isNetworkLoading = false
+						   self.setState(self.state)
+						}, 5000)
                 },
                 // Note: it's important to handle errors here
                 // instead of a catch() block so that we don't swallow
                 // exceptions from actual bugs in components.
                 (error) => {
 					  console.log(error)
-					  self.networkLoading = false
+					  self.state.isNetworkLoading = false
+					  self.setState(self.state)
 					  self.scanned = ""
                 }
 				  )
           }
-        } else if (!self.networkLoading) {
+        } else if (!self.state.isNetworkLoading) {
           self.hideMarkers()
 		  self.scanned = ""
         }
@@ -215,19 +212,25 @@ class WebCamStream extends Component {
       }
     }, 10)
   }
-  
-
+  contextTypes: {
+    router: React.PropTypes.func
+  }
   render () {
-    const { isVideoLoading, marginTop, marginLeft } = this.state
+    const { isVideoLoading, isNetworkLoading, marginTop, marginLeft, goDetails } = this.state
 	const self = this
 	
 	function handleClick(e) {
 		e.preventDefault();
 		console.log('The link was clicked.');
 		if (self.scanned !== "") {
-			alert(self.scanned)
+			self.state.goDetails=true
+			self.setState(self.state)
 		}
 	  }
+	  
+	 if (this.state.goDetails) {
+      return <Redirect to='/detail'/>
+    }
 	  
     return (
 	<div>
@@ -249,6 +252,11 @@ class WebCamStream extends Component {
 
         {isVideoLoading && <p>Please wait while we load the video stream.</p>}
       </div>
+		{isNetworkLoading && (<Link to="/detail">
+			  <button variant="outlined">
+				Read information
+			  </button>
+		</Link>)}
 	  </div>
     )
   }
