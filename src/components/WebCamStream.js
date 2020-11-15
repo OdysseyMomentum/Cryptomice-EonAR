@@ -132,8 +132,8 @@ class WebCamStream extends Component {
   }
 
   move (x, y, lenght) {
-    const xpos = x - this.innerWidth / 2 + lenght / 2
-    const ypos = y - this.innerHeight / 2 + lenght / 2
+    const xpos = x - this.innerWidth / 2 + lenght / 2 -100
+    const ypos = y - this.innerHeight / 2 + lenght / 2 -50
     this.setState({ isVideoLoading: false, marginLeft: xpos, marginTop: ypos })
  	// $('#sceneElement').css( 'margin-left', xpos).css( 'margin-top', ypos)
   }
