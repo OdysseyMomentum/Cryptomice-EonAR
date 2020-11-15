@@ -11,7 +11,6 @@ class Details extends Component {
   }
 
   render () {
-	 
     return (
       <div style={{ width: '80%', marginLeft: '10%' }}>
         <Link to='/'><button variant='outlined'>back</button></Link><br />
@@ -21,13 +20,22 @@ class Details extends Component {
           <p style={{ top: '50px', bottom: '50px' }}>Not compliant</p>
         </div>
 		<p>Serial number: {this.serial}</p>
-        <p>Shipping Details</p>
+        <h4>Shipping Details</h4>
         <table style={{ width: '100%' }}>
 		<tbody>
           <tr>Production facility<td /><td>MSD Turkey</td></tr>
           <tr>Production of product<td /><td>19 Oct 2020</td></tr>
           <tr>Shipping time<td /><td>13 days</td></tr>
           <tr>Destination<td /><td>Stockholm</td></tr>
+		</tbody>
+        </table><br/>
+		<h4>Shipping history</h4>
+        <table style={{ width: '100%' }}>
+		<tbody>
+          <tr>Production<td /><td style={{ color: 'green' }}>OK</td></tr>
+          <tr>Shipper<td /><td style={{ color: 'green' }}>OK</td></tr>
+          <tr>Air Cargo<td /><td style={{ color: 'green' }}>OK</td></tr>
+          <tr>Warehouse<td /><td style={{ color: 'red' }}>Not compliant</td></tr>
 		</tbody>
         </table>
         <img src={process.env.PUBLIC_URL +'/gs1-resolver.jpg'} height='150px' />
