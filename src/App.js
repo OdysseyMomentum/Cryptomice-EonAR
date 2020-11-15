@@ -14,21 +14,19 @@ const App = () => (
 const Home = () => (
   <div className='home'>
     <WebCamStream />
-    <img src={process.env.PUBLIC_URL +'/gs1-resolver.jpg'} height='150px' />
   </div>
 )
 
 const Detail = () => (
   <div className='detail'>
     <Details />
-    <img src={process.env.PUBLIC_URL +'/gs1-resolver.jpg'} height='150px' />
   </div>
 )
 
 const Main = () => (
   <Switch>
     <Route exact path='/' component={Home} />
-    <Route exact path='/detail' component={Detail} />
+    <Route exact path='/detail/:id'  component={Detail} />
   </Switch>
 )
 

@@ -178,7 +178,8 @@ class WebCamStream extends Component {
           var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
 		  self.move(xcenter, ycenter, lenght)
 
-		  self.scanned = code
+		  self.state.scanned = code.data
+		  self.setState(self.state)
           if (!self.state.isNetworkLoading) {
             self.state.isNetworkLoading = true
             fetch('https://eonml.cryptomice.eu/model/test4/predict?data=1,0,1,0.2,0')
@@ -199,14 +200,15 @@ class WebCamStream extends Component {
                 (error) => {
 					  console.log(error)
 					  self.state.isNetworkLoading = false
+					  self.state.scanned = ""
 					  self.setState(self.state)
-					  self.scanned = ""
                 }
 				  )
           }
         } else if (!self.state.isNetworkLoading) {
           self.hideMarkers()
-		  self.scanned = ""
+		  self.state.scanned = ""
+		  self.setState(self.state)
         }
         requestAnimationFrame(this.tick)
       }
@@ -216,26 +218,26 @@ class WebCamStream extends Component {
     router: React.PropTypes.func
   }
   render () {
-    const { isVideoLoading, isNetworkLoading, marginTop, marginLeft, goDetails } = this.state
+    const { isVideoLoading, isNetworkLoading, marginTop, marginLeft, goDetails, scanned } = this.state
 	const self = this
 	
 	function handleClick(e) {
 		e.preventDefault();
 		console.log('The link was clicked.');
-		if (self.scanned !== "") {
+		if (self.state.scanned !== "") {
 			self.state.goDetails=true
 			self.setState(self.state)
 		}
 	  }
 	  
 	 if (this.state.goDetails) {
-      return <Redirect to='/detail'/>
+      return <Redirect to={`/detail/${this.state.scanned}`}/>
     }
 	  
     return (
 	<div>
 	    <h2>Scan Qr code</h2>
-		{isNetworkLoading && (<Link to="/detail">
+		{isNetworkLoading && (<Link to={`/detail/${this.state.scanned}`}>
 			  <button variant="outlined" style={{position:'absolute', right:'20px', top:'10px'}}>
 				Read information
 			  </button>
@@ -257,6 +259,8 @@ class WebCamStream extends Component {
 
         {isVideoLoading && <p>Please wait while we load the video stream.</p>}
       </div>
+	  
+      <img src={process.env.PUBLIC_URL +'/gs1-resolver.jpg'} height='150px' />
 	  </div>
     )
   }
