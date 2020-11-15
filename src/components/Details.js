@@ -14,19 +14,13 @@ class Details extends Component {
 	 
     return (
       <div style={{ width: '80%', marginLeft: '10%' }}>
-        <Link to='/'>
-          <button variant='outlined'>
-				back
-          </button>
-        </Link>
-        <br />
+        <Link to='/'><button variant='outlined'>back</button></Link><br />
         <h2>Scan result</h2>
         <p>Based on historical network of our machine learning algorithm this product is:</p>
         <div style={{ backgroundColor: 'red', color: 'white' }}>
           <p style={{ top: '50px', bottom: '50px' }}>Not compliant</p>
         </div>
-		<p>Serial number</p>
-		<p>{this.serial}</p>
+		<p>Serial number: {this.serial}</p>
         <p>Shipping Details</p>
         <table style={{ width: '100%' }}>
 		<tbody>

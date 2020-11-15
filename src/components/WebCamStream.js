@@ -217,6 +217,7 @@ class WebCamStream extends Component {
 				  )
     }
   }
+  
   forward (e) {
     e.preventDefault()
     console.log('The link was clicked.')
@@ -230,30 +231,19 @@ class WebCamStream extends Component {
     const { isVideoLoading, isNetworkLoading, marginTop, marginLeft, goDetails, scanned } = this.state
 	 if (this.state.goDetails) { return <Redirect to={`/detail/${this.state.scanned}`} /> }
     function handleClick (e) { this.forward(e) }
-
     return (
       <div>
         <h2>Scan Qr code</h2>
         <div style={{ width: '800px', height: '550px' }} onClick={handleClick}>
-          <video
-            ref={this.videoTag}
-            width='800'
-            height='600'
-            autoPlay
-            style={{ display: 'none', zIndex: -1 }}
-          />
+          <video ref={this.videoTag} width='800'  height='600' autoPlay style={{ display: 'none', zIndex: -1 }}/>
 
           {!isVideoLoading && <canvas ref={this.canvas} />}
-          <div style={{ width: '800px', height: '600px', position: 'fixed', top: '0px', marginTop: marginTop, marginLeft: marginLeft }}
-            ref={mount => { this.mount = mount }} />
+          <div style={{ width: '800px', height: '600px', position: 'fixed', top: '0px', marginTop: marginTop, marginLeft: marginLeft }} ref={mount => { this.mount = mount }} />
           {isVideoLoading && <p>Please wait while we load the video stream.</p>}
-        </div>
-
+          </div>
         <img src={process.env.PUBLIC_URL + '/gs1-resolver.jpg'} height='150px' />
         {isNetworkLoading && (<Link to={`/detail/${this.state.scanned}`}>
-          <button variant='outlined' style={{ position: 'absolute', right: '20px', top: '10px' }}>
-				SERIAL information
-          </button>
+          <button variant='outlined' style={{ position: 'absolute', right: '20px', top: '10px' }}>SERIAL information</button>
         </Link>)}
       </div>
     )
