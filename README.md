@@ -4,16 +4,17 @@ Augmented Reality QR code scanner for GS1 serial product.
 
 ## Go to 
 [https://eonvr.cryptomice.eu](https://eonvr.cryptomice.eu) for a live demo or scan the followin qrcode
-![qrcode](https://eonvr.cryptomice.eu/qr-code.png)
+![qrcode](https://raw.githubusercontent.com/OdysseyMomentum/Cryptomice-EonAR/main/public/qr-code.png )
 
 
-### Install
+## For Jedi
+Run the backend
+- Install
 automatically fetch and install react framework and all required libraries
 ```bash
 npm install
 ```
-
-### Deploy
+- Deploy
 The app will be available by default at http://localhost:3000/
 
 ```bash
