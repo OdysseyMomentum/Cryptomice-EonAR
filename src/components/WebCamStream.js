@@ -181,7 +181,7 @@ class WebCamStream extends Component {
 		  self.scanned = code
           if (!self.state.isNetworkLoading) {
             self.state.isNetworkLoading = true
-            fetch('http://ec2-18-202-26-252.eu-west-1.compute.amazonaws.com:5005/model/test4/predict?data=1,0,1,0.2,0')
+            fetch('https://eonml.cryptomice.eu/model/test4/predict?data=1,0,1,0.2,0')
 				  .then(res => res.json())
 				  .then(
                 (result) => {

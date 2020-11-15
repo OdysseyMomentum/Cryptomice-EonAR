@@ -1,7 +1,7 @@
 import logo from './logo.svg'
 import './App.css'
 import WebCamStream from './components/WebCamStream'
-import WebCamAframe from './components/WebCamAframe'
+//import WebCamAframe from './components/WebCamAframe'
 import Details from './components/Details'
 import { NavLink, Switch, Route, Link } from 'react-router-dom'
 

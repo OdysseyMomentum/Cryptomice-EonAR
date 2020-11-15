@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "homepage": "http://ec2-18-202-26-252.eu-west-1.compute.amazonaws.com:3000/",
+  "homepage": "https://eonml.cryptomice.eu/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
