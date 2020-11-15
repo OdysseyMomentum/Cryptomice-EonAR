@@ -7,7 +7,8 @@ Go to
 ![qrcode](https://raw.githubusercontent.com/OdysseyMomentum/Cryptomice-EonAR/main/public/qr-code.png )
 
 
-## For Jedi
+**For Jedi** 
+
 Run the backend
 - Install
 automatically fetch and install react framework and all required libraries
