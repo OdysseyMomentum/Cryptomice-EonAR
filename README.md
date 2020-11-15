@@ -3,9 +3,11 @@
 Augmented Reality QR code scanner for GS1 serial product.
 
 Go to 
-[https://eonar.cryptomice.eu](https://eonar.cryptomice.eu) for a live demo or scan the followin qrcode
+[https://eonar.cryptomice.eu](https://eonar.cryptomice.eu) for a live demo or scan the following qrcode
 ![qrcode](https://raw.githubusercontent.com/OdysseyMomentum/Cryptomice-EonAR/main/public/qr-code.png )
 
+What do you see if Eon qrcode if it is not compliant (as before)?
+![qrcode](https://raw.githubusercontent.com/OdysseyMomentum/Cryptomice-EonAR/main/public/Em3NtRhXYAAiKfQ.jpeg)
 
 **For Jedi** 
 
