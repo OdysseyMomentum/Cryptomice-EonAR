@@ -172,13 +172,14 @@ class WebCamStream extends Component {
         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
 	
-        if (code && code.data.startsWith("http") ) {
+        if (code && code.data.startsWith("https://eonar.cryptomice.eu/?") ) {
           var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
           var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
           var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
 		  self.move(xcenter, ycenter, lenght)
 
-		  self.state.scanned = code.data
+		   var serial = code.data.split("?")[1].split("=")[1]
+		  self.state.scanned = serial
 		  self.setState(self.state)
           if (!self.state.isNetworkLoading) {
             self.state.isNetworkLoading = true
@@ -237,11 +238,6 @@ class WebCamStream extends Component {
     return (
 	<div>
 	    <h2>Scan Qr code</h2>
-		{isNetworkLoading && (<Link to={`/detail/${this.state.scanned}`}>
-			  <button variant="outlined" style={{position:'absolute', right:'20px', top:'10px'}}>
-				Read information
-			  </button>
-		</Link>)}
       <div style={{ width: '800px', height: '550px' }} onClick={handleClick}>
         <video
           ref={this.videoTag}
@@ -261,6 +257,11 @@ class WebCamStream extends Component {
       </div>
 	  
       <img src={process.env.PUBLIC_URL +'/gs1-resolver.jpg'} height='150px' />
+		{isNetworkLoading && (<Link to={`/detail/${this.state.scanned}`}>
+			  <button variant="outlined" style={{position:'absolute', right:'20px', top:'10px'}}>
+				SERIAL information
+			  </button>
+		</Link>)}
 	  </div>
     )
   }
