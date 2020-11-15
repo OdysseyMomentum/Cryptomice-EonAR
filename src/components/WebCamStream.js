@@ -160,9 +160,9 @@ class WebCamStream extends Component {
       else if (video.readyState === video.HAVE_ENOUGH_DATA) {
         clearInterval(checkVideoState)
         if (!this.canvas.current) { return }
-        this.setState({ isVideoLoading: false, marginLeft: this.state.marginLeft, marginTop: this.state.marginTop })
+        self.setState({ isVideoLoading: false, marginLeft: this.state.marginLeft, marginTop: this.state.marginTop })
 
-        const imageData = getImageData(this.canvas.current, video)
+        const imageData = self.getImageData(this.canvas.current, video)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
         if (code && code.data.startsWith('https://eonar.cryptomice.eu/?')) {
           self.centerMarker(code)
@@ -184,8 +184,8 @@ class WebCamStream extends Component {
     var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
     var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
     var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
-		  self.move(xcenter, ycenter, lenght)
-	  }
+	this.move(xcenter, ycenter, lenght)
+  }
 
   getImageData (canvasElement, video) {
 	  const canvas = canvasElement.getContext('2d')
@@ -196,6 +196,7 @@ class WebCamStream extends Component {
   }
 
   fetchSerial (code) {
+	  var self = this
 	  if (this.state.isNetworkLoading) return
       this.state.isNetworkLoading = true
       fetch('https://eonml.cryptomice.eu/model/test4/predict?data=1,0,1,0.2,0')
@@ -203,7 +204,7 @@ class WebCamStream extends Component {
 				  .then(
           (result) => {
 					  const risk = parseFloat(result['results'][0])
-					  if (risk) { self.showRedMarker() } else { self.showGreenMarker() }
+					  if (risk) { this.showRedMarker() } else { self.showGreenMarker() }
 					  setTimeout(function () {
 						  self.state.isNetworkLoading = false
 						   self.setState(self.state)
@@ -213,10 +214,8 @@ class WebCamStream extends Component {
 					  self.state.isNetworkLoading = false
 					  self.state.scanned = ''
 					  self.setState(self.state)
-          }
-				  )
+          })
     }
-  }
   
   forward (e) {
     e.preventDefault()
