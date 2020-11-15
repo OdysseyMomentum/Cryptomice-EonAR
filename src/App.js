@@ -14,14 +14,14 @@ const App = () => (
 const Home = () => (
   <div className='home'>
     <WebCamStream />
-    <img src='http://localhost:3000/OdysseyMomentum/Cryptomice-EonAR/gs1-resolver.jpg' height='150px' />
+    <img src={process.env.PUBLIC_URL +'/gs1-resolver.jpg'} height='150px' />
   </div>
 )
 
 const Detail = () => (
   <div className='detail'>
     <Details />
-    <img src='http://localhost:3000/OdysseyMomentum/Cryptomice-EonAR/gs1-resolver.jpg' height='150px' />
+    <img src={process.env.PUBLIC_URL +'/gs1-resolver.jpg'} height='150px' />
   </div>
 )
 

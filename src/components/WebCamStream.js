@@ -55,13 +55,13 @@ class WebCamStream extends Component {
     loader.crossOrigin = true
     var self = this
 
-    loader.load('http://localhost:3000/OdysseyMomentum/Cryptomice-EonAR/magic_green/scene.gltf', function (data) {
+    loader.load(process.env.PUBLIC_URL +'/magic_green/scene.gltf', function (data) {
       self.magicGreenScene = data.scene
       self.magicGreenScene.position.set(0, -10, -0.75)
 	  // self.showGreen()
     })
 
-    loader.load('http://localhost:3000/OdysseyMomentum/Cryptomice-EonAR/magic_red/scene.gltf', function (data) {
+    loader.load(process.env.PUBLIC_URL +'/magic_red/scene.gltf', function (data) {
       self.magicRedScene = data.scene
       self.magicRedScene.position.set(0, -10, -0.75)
       // self.showRed()
@@ -172,7 +172,7 @@ class WebCamStream extends Component {
         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
 	
-        if (code && code.data.startWith("http") ) {
+        if (code && code.data.startsWith("http") ) {
           var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
           var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
           var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
