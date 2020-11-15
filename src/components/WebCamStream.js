@@ -235,6 +235,11 @@ class WebCamStream extends Component {
     return (
 	<div>
 	    <h2>Scan Qr code</h2>
+		{isNetworkLoading && (<Link to="/detail">
+			  <button variant="outlined" style={{position:'absolute', right:'20px', top:'10px'}}>
+				Read information
+			  </button>
+		</Link>)}
       <div style={{ width: '800px', height: '550px' }} onClick={handleClick}>
         <video
           ref={this.videoTag}
@@ -252,11 +257,6 @@ class WebCamStream extends Component {
 
         {isVideoLoading && <p>Please wait while we load the video stream.</p>}
       </div>
-		{isNetworkLoading && (<Link to="/detail">
-			  <button variant="outlined">
-				Read information
-			  </button>
-		</Link>)}
 	  </div>
     )
   }
