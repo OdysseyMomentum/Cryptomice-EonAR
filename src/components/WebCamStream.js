@@ -156,27 +156,17 @@ class WebCamStream extends Component {
     const self = this
 
     const checkVideoState = setInterval(() => {
-      if (!video) { return }
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      if (!video) return
+      else if (video.readyState === video.HAVE_ENOUGH_DATA) {
         clearInterval(checkVideoState)
         if (!this.canvas.current) { return }
         this.setState({ isVideoLoading: false, marginLeft: this.state.marginLeft, marginTop: this.state.marginTop })
 
-        const canvasElement = this.canvas.current
-        const canvas = canvasElement.getContext('2d')
-        canvasElement.height = video.videoHeight
-        canvasElement.width = video.videoWidth
-        canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height)
-        const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
+        const imageData = getImageData(this.canvas.current, video)
         var code = jsQR(imageData.data, imageData.width, imageData.height)
-
         if (code && code.data.startsWith('https://eonar.cryptomice.eu/?')) {
-          var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
-          var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
-          var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
-		  self.move(xcenter, ycenter, lenght)
-
-		   var serial = code.data.split('?')[1].split('=')[1]
+          self.centerMarker(code)
+		  var serial = code.data.split('?')[1].split('=')[1]
 		  self.state.scanned = serial
 		  self.setState(self.state)
 		  self.fetchSerial(serial)
@@ -190,14 +180,28 @@ class WebCamStream extends Component {
     }, 10)
   }
 
+  centerMarker (code) {
+    var xcenter = (code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x) / 2 + code.location.topLeftCorner.x
+    var ycenter = (code.location.bottomRightCorner.y - code.location.topLeftCorner.y) / 2 + code.location.topLeftCorner.y
+    var lenght = code.location.bottomRightCorner.x - code.location.bottomLeftCorner.x
+		  self.move(xcenter, ycenter, lenght)
+	  }
+
+  getImageData (canvasElement, video) {
+	  const canvas = canvasElement.getContext('2d')
+    canvasElement.height = video.videoHeight
+    canvasElement.width = video.videoWidth
+    canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height)
+    return canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
+  }
+
   fetchSerial (code) {
-	  if (!self.state.isNetworkLoading) {
-      self.state.isNetworkLoading = true
+	  if (this.state.isNetworkLoading) return
+      this.state.isNetworkLoading = true
       fetch('https://eonml.cryptomice.eu/model/test4/predict?data=1,0,1,0.2,0')
 				  .then(res => res.json())
 				  .then(
           (result) => {
-					  console.log(result)
 					  const risk = parseFloat(result['results'][0])
 					  if (risk) { self.showRedMarker() } else { self.showGreenMarker() }
 					  setTimeout(function () {
@@ -205,11 +209,7 @@ class WebCamStream extends Component {
 						   self.setState(self.state)
             }, 5000)
           },
-          // Note: it's important to handle errors here
-          // instead of a catch() block so that we don't swallow
-          // exceptions from actual bugs in components.
           (error) => {
-					  console.log(error)
 					  self.state.isNetworkLoading = false
 					  self.state.scanned = ''
 					  self.setState(self.state)
@@ -217,7 +217,6 @@ class WebCamStream extends Component {
 				  )
     }
   }
-
   forward (e) {
     e.preventDefault()
     console.log('The link was clicked.')
