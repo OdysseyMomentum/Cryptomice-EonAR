@@ -3,7 +3,7 @@
 Augmented Reality QR code scanner for GS1 serial product.
 
 Go to 
-[https://eonvr.cryptomice.eu](https://eonvr.cryptomice.eu) for a live demo or scan the followin qrcode
+[https://eonar.cryptomice.eu](https://eonar.cryptomice.eu) for a live demo or scan the followin qrcode
 ![qrcode](https://raw.githubusercontent.com/OdysseyMomentum/Cryptomice-EonAR/main/public/qr-code.png )
 
 
