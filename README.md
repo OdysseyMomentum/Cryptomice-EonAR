@@ -1,6 +1,5 @@
 ![sigridci](https://github.com/OdysseyMomentum/Cryptomice-EonAR/workflows/sigridci/badge.svg)
 
-
 # EonAR react app
 
 
