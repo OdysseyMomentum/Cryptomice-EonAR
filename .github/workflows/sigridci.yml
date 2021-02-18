@@ -9,6 +9,6 @@ jobs:
       - run: "git clone https://github.com/Software-Improvement-Group/sigridci.git sigridci"
       - name: "Run Sigrid CI" 
         env:
-          SIGRID_CI_ACCOUNT: "${{ secrets.SIGRID_CI_ACCOUNT }}"
-          SIGRID_CI_TOKEN: "${{ secrets.SIGRID_CI_TOKEN }}"
+          SIGRID_CI_ACCOUNT: "${{ secrets.SIGRID_CI_ORG_ACCOUNT }}"
+          SIGRID_CI_TOKEN: "${{ secrets.SIGRID_CI_ORG_TOKEN }}"
         run: "./sigridci/sigridci/sigridci.py --customer odysseymomentum --system cryptomice-eonar --source . --targetquality 3.5"
