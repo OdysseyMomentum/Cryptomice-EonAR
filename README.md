@@ -1,4 +1,5 @@
 ![sigridci](https://github.com/OdysseyMomentum/Cryptomice-EonAR/workflows/sigridci/badge.svg)
+
 # EonAR react app
 
 Augmented Reality QR code scanner for GS1 serial product.
