@@ -2,6 +2,7 @@
 
 # EonAR react app
 
+
 Augmented Reality QR code scanner for GS1 serial product.
 
 Go to 
